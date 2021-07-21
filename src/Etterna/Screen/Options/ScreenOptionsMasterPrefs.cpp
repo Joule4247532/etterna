@@ -848,6 +848,7 @@ InitializeConfOptions()
 	// Gameplay options
 	ADD(ConfOption("Center1Player", MovePref<bool>, "Off", "On"));
 	ADD(ConfOption("EasterEggs", MovePref<bool>, "Off", "On"));
+	ADD(ConfOption("MachineKeyDisable", MovePref<bool>, "Off", "On"));
 	// W1 is Fantastic Timing
 	ADD(ConfOption("AllowW1", MovePref<AllowW1>, "Never", "Always"));
 	ADD(ConfOption("SortBySSRNormPercent", MovePref<bool>, "Off", "On"));

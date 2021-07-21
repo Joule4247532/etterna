@@ -35,6 +35,8 @@
 
 #include <algorithm>
 
+#include "Core/Platform/Platform.hpp"
+
 GameState* GAMESTATE =
   nullptr; // global and accessible from anywhere in our program
 
@@ -486,7 +488,6 @@ GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 void
 GameState::BeginStage()
 {
-
 	// This should only be called once per stage.
 	if (m_iNumStagesOfThisSong != 0)
 		Locator::getLogger()->warn("XXX: m_iNumStagesOfThisSong == {}?", m_iNumStagesOfThisSong);
@@ -521,6 +522,9 @@ GameState::BeginStage()
 	m_iPlayerStageTokens -= m_iNumStagesOfThisSong;
 	if (CurrentOptionsDisqualifyPlayer(PLAYER_1))
 		STATSMAN->m_CurStageStats.m_player.m_bDisqualified = true;
+
+	// Enable the machine key disabling feature's InStage state
+	Core::Platform::setMachineKeyVal(true, 3);
 }
 
 void
@@ -529,6 +533,9 @@ GameState::CancelStage()
 	m_iPlayerStageTokens += m_iNumStagesOfThisSong;
 	m_iNumStagesOfThisSong = 0;
 	ResetStageStatistics();
+
+	// Disable the machine key disabling feature's InStage state
+	Core::Platform::setMachineKeyVal(false, 3);
 }
 
 void
@@ -557,6 +564,9 @@ GameState::FinishStage()
 	++m_iCurrentStageIndex;
 
 	m_iNumStagesOfThisSong = 0;
+
+	// Disable the machine key disabling feature's InStage state
+	Core::Platform::setMachineKeyVal(false, 3);
 
 	// Save the current combo to the profiles (why not)
 	Profile* pProfile = PROFILEMAN->GetProfile(PLAYER_1);

@@ -68,10 +68,14 @@ static void CheckFocus() {
 
 	// Maintain the Application priority at Above-Normal
 	// This helps to mitigate game stutter caused by CPU scheduling between frames
-	if (hasFocus)
+	// Set the machine key disabling feature 
+	if (hasFocus) {
 		Core::Platform::boostPriority();
-	else
+		Core::Platform::setMachineKeyVal(true, 2);
+	} else {
+		Core::Platform::setMachineKeyVal(false, 2);
 		Core::Platform::unboostPriority();
+	}
 }
 
 // Anonymous Namespace

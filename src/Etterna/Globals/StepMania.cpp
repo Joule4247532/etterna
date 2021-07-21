@@ -1173,6 +1173,9 @@ sm_main(int argc, char* argv[])
 
 	PREFSMAN->SavePrefsToDisk();
 
+
+	Core::Platform::setMachineKeyVal(false, 0);
+
 	ShutdownGame();
 
 	return 0;

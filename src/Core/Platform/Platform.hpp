@@ -169,6 +169,15 @@ namespace Core::Platform {
 	 */
 	bool unboostPriority();
 
+	/*
+	 * Enable or disable the Machine key's (Windows Key, Mac home Key, Linux home key) conditions
+	 * to disable that key during gameplay if specified in the prefs
+	 * Only implemented in Windows so far
+	 * @param enable state to which the condition will be set
+	 * @param var Id of the condition to set the state
+	 */
+	void setMachineKeyVal(bool enable, int var);
+
     namespace Time {
 
         /**

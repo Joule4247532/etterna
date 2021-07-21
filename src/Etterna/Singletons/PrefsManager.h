@@ -188,6 +188,7 @@ class PrefsManager
 	Preference<int> m_fCenterImageAddWidth;
 	Preference<int> m_fCenterImageAddHeight;
 	Preference<bool> EnablePitchRates;
+	Preference<bool> m_MachineKeyDisable;
 	Preference<bool> LiftsOnOsuHolds;
 	Preference<bool> m_bEasterEggs;
 	Preference<bool> m_AllowMultipleToasties;

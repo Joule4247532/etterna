@@ -17,6 +17,15 @@
 // Translation Unit Specific Functions
 struct CallbackData { HWND hParent; HWND hResult; };
 
+// Machine Key Specific Conditions and Hook
+struct MachineKeyData
+{
+	HHOOK hKeyboardHook;
+	BOOL bActive = true;
+	BOOL bFocus = true;
+	BOOL bInStage = false;
+} sMachineKeyData;
+
 // TODO: Consider *any* possibility where we don't need to access the registry. Works, but is it ideal?
 std::string RegistryGetString(HKEY hKey, const std::string& subKey, const std::string& value){
     LONG retCode; // Return code for registry functions
@@ -110,6 +119,30 @@ void InvalidParameterHandler(const wchar_t* szExpression, const wchar_t* szFunct
 	  expr.c_str()));
 }
 
+LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (nCode < 0 || nCode != HC_ACTION) // do not process message
+		return CallNextHookEx(sMachineKeyData.hKeyboardHook, nCode, wParam, lParam);
+
+	bool bEatKeystroke = false;
+	KBDLLHOOKSTRUCT* p = (KBDLLHOOKSTRUCT*)lParam;
+	switch (wParam) {
+		case WM_KEYDOWN:
+		case WM_KEYUP: {
+			bEatKeystroke =
+			  (sMachineKeyData.bFocus && sMachineKeyData.bInStage &&
+			   sMachineKeyData.bActive &&
+				((p->vkCode == VK_LWIN) || (p->vkCode == VK_RWIN)));
+			break;
+		}
+	}
+
+	if (bEatKeystroke)
+		return 1;
+	else
+		return CallNextHookEx(sMachineKeyData.hKeyboardHook, nCode, wParam, lParam);
+}
+
 namespace Core::Platform {
 
     void init(){
@@ -122,6 +155,10 @@ namespace Core::Platform {
         /* Windows boosts priority on keyboard input, among other things.  Disable
          * that for the main thread. */
         SetThreadPriorityBoost(GetCurrentThread(), TRUE);
+
+		// Create the hook for enabling or disabling the windows key
+		sMachineKeyData.hKeyboardHook = SetWindowsHookEx(
+		  WH_KEYBOARD_LL, LowLevelKeyboardProc, GetModuleHandle(NULL), 0);
     }
 
 	std::string getSystem(){
@@ -359,4 +396,29 @@ namespace Core::Platform {
 		return SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS) != 0;
     }
 
+	void setMachineKeyVal(bool enable, int var)
+	{
+		switch (var) {
+			case 0:
+				// Only used to unhook the hook when quitting the app if enable is false
+				if (!enable)
+					UnhookWindowsHookEx(sMachineKeyData.hKeyboardHook);
+				break;
+			case 1:
+				// Active
+				sMachineKeyData.bActive = enable;
+				break;
+			case 2:
+				// Focus
+				sMachineKeyData.bFocus = enable;
+				break;
+			case 3:
+				// InStage
+				sMachineKeyData.bInStage = enable;
+				break;
+			default:
+				// Invalid
+				break;
+		}
+	}
 }

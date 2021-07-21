@@ -276,4 +276,10 @@ namespace Core::Platform {
         Locator::getLogger()->warn("Core::Platform::unboostPriority not implemented");
 		return true;
     }
+
+	void
+	setMachineKeyVal(bool enable, int var)
+	{
+		Locator::getLogger()->warn("Core::Platform::setMachineKeyVal not implemented");
+	}
 }
