@@ -523,6 +523,8 @@ GameState::BeginStage()
 	if (CurrentOptionsDisqualifyPlayer(PLAYER_1))
 		STATSMAN->m_CurStageStats.m_player.m_bDisqualified = true;
 
+	// Update the machine key disabling option
+	Core::Platform::setMachineKeyVal(PREFSMAN->m_MachineKeyDisable.Get(), 1);
 	// Enable the machine key disabling feature's InStage state
 	Core::Platform::setMachineKeyVal(true, 3);
 }

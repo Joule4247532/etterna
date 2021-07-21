@@ -119,7 +119,7 @@ void InvalidParameterHandler(const wchar_t* szExpression, const wchar_t* szFunct
 	  expr.c_str()));
 }
 
-LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
 	if (nCode < 0 || nCode != HC_ACTION) // do not process message
 		return CallNextHookEx(sMachineKeyData.hKeyboardHook, nCode, wParam, lParam);
